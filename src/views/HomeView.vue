@@ -2,20 +2,20 @@
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
+const requestOptions = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: 'Bearer ' + import.meta.env.VITE_THEMOVIEDB_ACCESS_TOKEN
+  }
+}
+
 const configuration = ref({})
 const movies = ref([])
 
 onMounted(async () => {
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: 'Bearer ' + import.meta.env.VITE_THEMOVIEDB_ACCESS_TOKEN
-    }
-  }
-
   axios
-    .get('https://api.themoviedb.org/3/configuration', options)
+    .get('https://api.themoviedb.org/3/configuration', requestOptions)
     .then((response) => {
       configuration.value = response.data
     })
@@ -25,16 +25,8 @@ onMounted(async () => {
 })
 
 const loadMovies = async (type) => {
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: 'Bearer ' + import.meta.env.VITE_THEMOVIEDB_ACCESS_TOKEN
-    }
-  }
-
   axios
-    .get(`https://api.themoviedb.org/3/movie/${type}?language=en-US&page=1`, options)
+    .get(`https://api.themoviedb.org/3/movie/${type}?language=en-US&page=1`, requestOptions)
     .then((response) => {
       movies.value = response.data.results
     })
