@@ -1,6 +1,6 @@
 # themoviedb-explorer-vue
 
-This VU3 application uses the movie database API to get a list of recent films and details about each movie.
+This VUE3 application uses the movie database API to get a list of recent films and details about each movie.
 
 ## Project Setup
 
