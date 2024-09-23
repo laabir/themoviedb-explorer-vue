@@ -1,5 +1,14 @@
 <script setup>
+import { onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import { useConfigurationStore } from '@/stores/configuration'
+
+const configurationStore = useConfigurationStore()
+onMounted(() => {
+  if (!configurationStore.loaded) {
+    configurationStore.initFetchConfigurations()
+  }
+})
 </script>
 
 <template>

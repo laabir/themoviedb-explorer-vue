@@ -1,127 +1,72 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import axios from 'axios'
+import { useConfigurationStore } from '@/stores/configuration'
+import { useMoviesStore } from '@/stores/movies'
 
-const locale = ref('fr-FR')
-const requestOptions = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: 'Bearer ' + import.meta.env.VITE_THEMOVIEDB_ACCESS_TOKEN
-  }
-}
-
-const configuration = ref({})
-const genres = ref([])
+const configurationStore = useConfigurationStore()
+const moviesStore = useMoviesStore()
 const movies = ref([])
 const mainTitle = ref('')
-const page = ref(1)
+
+const listsMenu = [
+  {
+    title: 'Now Playing',
+    listName: 'now_playing'
+  },
+  {
+    title: 'Popular',
+    listName: 'popular'
+  },
+  {
+    title: 'Top Rated',
+    listName: 'top_rated'
+  },
+  {
+    title: 'Upcoming',
+    listName: 'upcoming'
+  },
+  {
+    title: 'Trending Today',
+    listName: 'day'
+  },
+  {
+    title: 'Trending This Week',
+    listName: 'week'
+  }
+]
+
+const showMovies = async (list) => {
+  if (moviesStore.getMoviesTotal(list) < 1) {
+    await moviesStore.fetchMovies(list)
+  }
+
+  movies.value = moviesStore.getMovies(list)
+  mainTitle.value = listsMenu.find((item) => {
+    return item.listName === list
+  })?.title
+}
 
 onMounted(() => {
-  updateMainTitle('')
-  loadConfiguration()
+  showMovies('now_playing')
 })
-
-const loadConfiguration = async () => {
-  try {
-    const [configResponse, genresResponse] = await Promise.all([
-      axios.get(
-        import.meta.env.VITE_THEMOVIEDB_HOST +
-          `/${import.meta.env.VITE_THEMOVIEDB_API_VERSION}` +
-          `/configuration`,
-        requestOptions
-      ),
-
-      axios.get(
-        import.meta.env.VITE_THEMOVIEDB_HOST +
-          `/${import.meta.env.VITE_THEMOVIEDB_API_VERSION}` +
-          `/genre/movie/list?language=${locale.value}`,
-        requestOptions
-      )
-    ])
-
-    configuration.value = configResponse.data
-    genres.value = genresResponse.data.genres
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const loadMovies = async (sortedBy) => {
-  axios
-    .get(
-      import.meta.env.VITE_THEMOVIEDB_HOST +
-        `/${import.meta.env.VITE_THEMOVIEDB_API_VERSION}` +
-        `/movie/${sortedBy}?language=${locale.value}&page=${page.value}`,
-      requestOptions
-    )
-    .then((response) => {
-      movies.value = response.data.results
-      updateMainTitle(sortedBy)
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-}
-
-const loadTrending = async (period) => {
-  axios
-    .get(
-      import.meta.env.VITE_THEMOVIEDB_HOST +
-        `/${import.meta.env.VITE_THEMOVIEDB_API_VERSION}` +
-        `/trending/movie/${period}?language=${locale.value}&page=${page.value}`,
-      requestOptions
-    )
-    .then((response) => {
-      movies.value = response.data.results
-      updateMainTitle('trending')
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-}
-
-const updateMainTitle = (sortedBy) => {
-  switch (sortedBy) {
-    case 'now_playing':
-      mainTitle.value = 'Now Playing'
-      break
-    case 'popular':
-      mainTitle.value = 'Popular'
-      break
-    case 'top_rated':
-      mainTitle.value = 'Top Rated'
-      break
-    case 'upcoming':
-      mainTitle.value = 'Upcoming'
-      break
-    case 'trending':
-      mainTitle.value = 'Trending'
-      break
-    default:
-      mainTitle.value = 'Welcome to The Movie Database Explorer'
-      break
-  }
-}
 </script>
 
 <template>
   <div class="home">
-    <ul class="movies-sorter">
-      <li><input type="button" value="In theaters" @click="loadMovies('now_playing')" /></li>
-      <li><input type="button" value="Popular" @click="loadMovies('popular')" /></li>
-      <li><input type="button" value="Top rated" @click="loadMovies('top_rated')" /></li>
-      <li><input type="button" value="Upcoming" @click="loadMovies('upcoming')" /></li>
-      <li><input type="button" value="Trending today" @click="loadTrending('day')" /></li>
-      <li><input type="button" value="Trending this week" @click="loadTrending('week')" /></li>
-    </ul>
     <h1>{{ mainTitle }}</h1>
+
+    <ul class="movies-sorter">
+      <li v-for="menuItem in listsMenu" :key="menuItem.listName">
+        <input type="button" :value="menuItem.title" @click="showMovies(menuItem.listName)" />
+      </li>
+    </ul>
+
     <ul v-if="movies.length > 0" class="movies">
       <li v-for="movie in movies" :key="movie.id" class="movies-item">
         <img
           :src="
-            configuration.images.secure_base_url +
-            configuration.images.poster_sizes[3] +
+            configurationStore.getImagesConfig()?.secure_base_url +
+            configurationStore.getImagesConfig()?.poster_sizes[3] +
             movie.poster_path
           "
           class="movies-item__poster"
@@ -134,7 +79,7 @@ const updateMainTitle = (sortedBy) => {
           <ul class="movies-item__genres">
             <li v-for="genreId in movie.genre_ids" :key="genreId">
               {{
-                genres.find((genre) => {
+                configurationStore.getGenresConfig()?.find((genre) => {
                   return genre.id === genreId
                 })?.name
               }}
