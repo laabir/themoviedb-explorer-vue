@@ -33,11 +33,14 @@ export const useMoviesStore = defineStore('movies', {
           requestOptions
         )
 
-        this.movies[listName] = moviesResponse.data.results
-        //updateMainTitle(listName)
+        this.movies[listName] = [...(this.movies[listName] ?? []), ...moviesResponse.data.results]
       } catch (error) {
         console.error(error)
       }
+    },
+    async loadMoreMovies(listName) {
+      this.pages[listName]++
+      await this.fetchMovies(listName)
     }
   },
 
