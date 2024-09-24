@@ -42,3 +42,45 @@ const movie = props.movie
     </div>
   </li>
 </template>
+
+<style scoped>
+.movies-item {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.movies-item__poster {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 1rem;
+}
+
+.movies-item__details {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 7% 10%;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.movies-item:hover .movies-item__details {
+  visibility: visible;
+  opacity: 100%;
+}
+
+.movies-item__overview {
+  text-overflow: ellipsis;
+}
+
+.movies-item__title {
+  font-weight: bold;
+}
+</style>

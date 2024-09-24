@@ -25,11 +25,9 @@ watch(
 </script>
 
 <template>
-  <main class="home">
-    <header>
-      <h1>{{ mainTitle }}</h1>
-    </header>
+  <header>
+    <h1>{{ mainTitle }}</h1>
+  </header>
 
-    <MoviesList />
-  </main>
+  <MoviesList />
 </template>

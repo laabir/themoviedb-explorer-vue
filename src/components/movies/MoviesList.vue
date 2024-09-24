@@ -39,8 +39,30 @@ watch(
 </script>
 
 <template>
-  <ul v-if="movies.length > 0" class="movies">
-    <MovieItem v-for="movie in movies" :key="movie.id" :movie="movie" />
-  </ul>
-  <input type="button" value="Load More" @click="loadMoreMovies" />
+  <div class="container">
+    <ul v-if="movies.length > 0" class="movies">
+      <MovieItem v-for="movie in movies" :key="movie.id" :movie="movie" />
+    </ul>
+    <input type="button" value="Load More" @click="loadMoreMovies" class="btn-loadmore" />
+  </div>
 </template>
+
+<style scoped>
+.movies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  margin-bottom: 30px;
+}
+
+.btn-loadmore {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 1rem;
+}
+</style>

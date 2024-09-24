@@ -24,6 +24,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <SideBar />
-  <RouterView />
+  <div class="layout">
+    <SideBar />
+    <main>
+      <RouterView />
+    </main>
+  </div>
 </template>
+
+<style scoped>
+.layout {
+  display: flex;
+  height: 100vh;
+}
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 50px;
+}
+</style>
