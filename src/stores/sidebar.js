@@ -43,6 +43,7 @@ export const useSidebarStore = defineStore('sidebar', {
 
   getters: {
     getMenuItems: (state) => () => state.menuItems,
+    getMenuKeys: (state) => () => state.menuItems.map((item) => item.itemKey),
     getSelectedMenuItem: (state) => () => state.selectedMenuItem
   }
 })

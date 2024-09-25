@@ -24,6 +24,7 @@ export const useMoviesStore = defineStore('movies', {
       const trendingPath = isTrending ? '/trending' : ''
 
       if (!this.pages[listName]) this.pages[listName] = 1
+      console.log('fetching page ', this.pages[listName], ' of ', listName)
 
       try {
         const moviesResponse = await axios.get(
@@ -33,19 +34,31 @@ export const useMoviesStore = defineStore('movies', {
           requestOptions
         )
 
-        this.movies[listName] = [...(this.movies[listName] ?? []), ...moviesResponse.data.results]
+        if (!this.movies[listName]) {
+          this.movies[listName] = []
+        }
+
+        const unfilteredMovies = [...this.movies[listName], ...moviesResponse.data.results]
+        const filteredMovies = unfilteredMovies.filter(
+          (movie, index, self) => index === self.findIndex((m) => m.id === movie.id)
+        )
+
+        this.movies[listName] = filteredMovies
+
+        console.log(filteredMovies)
       } catch (error) {
         console.error(error)
       }
     },
     async loadMoreMovies(listName) {
       this.pages[listName]++
+      console.log('loading page ', this.pages[listName], ' of ', listName)
       await this.fetchMovies(listName)
     }
   },
 
   getters: {
-    getMovies: (state) => (getBy) => state.movies[getBy],
-    getMoviesTotal: (state) => (getBy) => state.movies[getBy]?.length || 0
+    getMovies: (state) => (listName) => state.movies[listName],
+    getMoviesTotal: (state) => (listName) => state.movies[listName]?.length || 0
   }
 })

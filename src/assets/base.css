@@ -34,7 +34,8 @@ body {
 }
 
 /* Reset for ul and li */
-ul, li {
+ul,
+li {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -62,7 +63,7 @@ select {
 }
 
 /* Remove button style */
-input[type="button"] {
+input[type='button'] {
   background: none;
   border: none;
   cursor: pointer;
@@ -95,8 +96,12 @@ body {
 
 /* Example of using CSS custom properties for theming */
 :root {
-  --primary-color: #007bff;
-  --secondary-color: #051570;
+  --primary-color: #2c8d9f;
+  --secondary-color: rgba(16, 54, 94, 1);
+  --primary-color-hover: #33a8be;
+  --secondary-color-hover: #032531;
+  --primary-gradient: linear-gradient(-5deg, rgba(16, 54, 94, 1) 0%, rgba(44, 141, 159, 1) 100%);
+  --secondary-gradient: linear-gradient(-5deg, rgba(16, 54, 94, 1) 0%, rgb(33, 78, 108) 100%);
   --font-size-base: 1rem;
   --spacing-unit: 1rem;
 }

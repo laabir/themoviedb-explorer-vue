@@ -25,7 +25,8 @@ const sidebarStore = useSidebarStore()
 
 <style scoped>
 .sidebar {
-  background-color: var(--primary-color);
+  background: rgb(16, 54, 94);
+  background: var(--primary-gradient);
   display: flex;
   flex-direction: column;
   padding: 1.5rem 2rem;
@@ -36,7 +37,7 @@ const sidebarStore = useSidebarStore()
 .link-home {
   display: block;
   width: fit-content;
-  margin-bottom: 20px;
+  margin-bottom: 80px;
 }
 
 .menu {
@@ -51,6 +52,9 @@ const sidebarStore = useSidebarStore()
   text-transform: uppercase;
 }
 
+.sidebar input[type='button']:hover {
+  color: var(--primary-color-hover);
+}
 .sidebar input[type='button'].selected {
   color: var(--secondary-color);
 }

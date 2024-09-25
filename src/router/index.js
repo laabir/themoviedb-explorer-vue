@@ -5,17 +5,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/:selectedList?',
       name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/page',
-      name: 'page',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/PageView.vue')
+      component: HomeView,
+      props: (route) => ({ selectedList: route.params.selectedList || 'now_playing' })
     }
   ]
 })
