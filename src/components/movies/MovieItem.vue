@@ -11,22 +11,26 @@ const props = defineProps({
 })
 
 const movie = props.movie
+
+const poster =
+  configurationStore.getImagesConfig()?.secure_base_url +
+  configurationStore.getImagesConfig()?.poster_sizes[3] +
+  movie.poster_path
+
+const overview =
+  movie.overview.length < 200 ? movie.overview : movie.overview.substring(0, 200) + '...'
 </script>
 
 <template>
   <li class="movies-item">
-    <img
-      :src="
-        configurationStore.getImagesConfig()?.secure_base_url +
-        configurationStore.getImagesConfig()?.poster_sizes[3] +
-        movie.poster_path
-      "
-      class="movies-item__poster"
-    />
+    <img :src="poster" class="movies-item__poster" />
     <div class="movies-item__details">
       <p class="movies-item__title">
         {{ movie.title }}
         {{ movie.original_title !== movie.title ? `- ${movie.original_title}` : '' }}
+      </p>
+      <p v-if="movie.release_date" class="movies-item__year">
+        {{ movie.release_date.substring(0, 4) }}
       </p>
       <ul class="movies-item__genres">
         <li v-for="genreId in movie.genre_ids" :key="genreId">
@@ -37,8 +41,7 @@ const movie = props.movie
           }}
         </li>
       </ul>
-      <p v-if="movie.overview" class="movies-item__overview">{{ movie.overview }}</p>
-      <p v-if="movie.release_date">{{ movie.release_date.substring(0, 4) }}</p>
+      <p v-if="movie.overview" class="movies-item__overview">{{ overview }}</p>
     </div>
   </li>
 </template>
@@ -49,7 +52,6 @@ const movie = props.movie
   width: 200px;
   height: 300px;
   overflow: hidden;
-  cursor: pointer;
 }
 
 .movies-item__poster {
@@ -60,6 +62,8 @@ const movie = props.movie
 }
 
 .movies-item__details {
+  border-radius: 1rem;
+  overflow: hidden;
   position: absolute;
   top: 0;
   left: 0;
@@ -76,8 +80,27 @@ const movie = props.movie
   opacity: 100%;
 }
 
+.movies-item__genres {
+  font-size: 0.7em;
+  display: flex;
+  column-gap: 0.2rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 0rem;
+}
+
+.movies-item__year {
+  font-size: 0.7em;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
 .movies-item__overview {
   text-overflow: ellipsis;
+  font-size: 0.8em;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .movies-item__title {
