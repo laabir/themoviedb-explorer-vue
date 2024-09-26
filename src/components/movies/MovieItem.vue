@@ -19,30 +19,44 @@ const poster =
 
 const overview =
   movie.overview.length < 200 ? movie.overview : movie.overview.substring(0, 200) + '...'
+
+const slugifyTitle = (title) => {
+  return title.toLowerCase().replace(/[^\w]+/g, '-')
+}
 </script>
 
 <template>
   <li class="movies-item">
-    <img :src="poster" class="movies-item__poster" />
-    <div class="movies-item__details">
-      <p class="movies-item__title">
-        {{ movie.title }}
-        {{ movie.original_title !== movie.title ? `- ${movie.original_title}` : '' }}
-      </p>
-      <p v-if="movie.release_date" class="movies-item__year">
-        {{ movie.release_date.substring(0, 4) }}
-      </p>
-      <ul class="movies-item__genres">
-        <li v-for="genreId in movie.genre_ids" :key="genreId">
-          {{
-            configurationStore.getGenresConfig()?.find((genre) => {
-              return genre.id === genreId
-            })?.name
-          }}
-        </li>
-      </ul>
-      <p v-if="movie.overview" class="movies-item__overview">{{ overview }}</p>
-    </div>
+    <router-link
+      :to="{
+        name: 'movieDetails',
+        params: {
+          movieId: parseInt(movie.id),
+          movieTitle: slugifyTitle(movie.title)
+        }
+      }"
+    >
+      <img :src="poster" class="movies-item__poster" />
+      <div class="movies-item__details">
+        <p class="movies-item__title">
+          {{ movie.title }}
+          {{ movie.original_title !== movie.title ? `- ${movie.original_title}` : '' }}
+        </p>
+        <p v-if="movie.release_date" class="movies-item__year">
+          {{ movie.release_date.substring(0, 4) }}
+        </p>
+        <ul class="movies-item__genres">
+          <li v-for="genreId in movie.genre_ids" :key="genreId">
+            {{
+              configurationStore.getGenresConfig()?.find((genre) => {
+                return genre.id === genreId
+              })?.name
+            }}
+          </li>
+        </ul>
+        <p v-if="movie.overview" class="movies-item__overview">{{ overview }}</p>
+      </div>
+    </router-link>
   </li>
 </template>
 

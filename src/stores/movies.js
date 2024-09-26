@@ -14,7 +14,8 @@ const requestOptions = {
 export const useMoviesStore = defineStore('movies', {
   state: () => ({
     movies: {},
-    pages: {}
+    pages: {},
+    moviesWithDetails: []
   }),
 
   actions: {
@@ -24,7 +25,6 @@ export const useMoviesStore = defineStore('movies', {
       const trendingPath = isTrending ? '/trending' : ''
 
       if (!this.pages[listName]) this.pages[listName] = 1
-      console.log('fetching page ', this.pages[listName], ' of ', listName)
 
       try {
         const moviesResponse = await axios.get(
@@ -44,16 +44,38 @@ export const useMoviesStore = defineStore('movies', {
         )
 
         this.movies[listName] = filteredMovies
-
-        console.log(filteredMovies)
       } catch (error) {
         console.error(error)
       }
     },
     async loadMoreMovies(listName) {
       this.pages[listName]++
-      console.log('loading page ', this.pages[listName], ' of ', listName)
       await this.fetchMovies(listName)
+    },
+    async fetchMovieDetails(movieId) {
+      const movieIndex = this.moviesWithDetails.findIndex((movie) => {
+        console.log(movie.id, movieId)
+        return movie.id === parseInt(movieId)
+      })
+      console.log(movieIndex)
+
+      if (movieIndex >= 0) return this.moviesWithDetails[movieIndex]
+
+      const configurationStore = useConfigurationStore()
+
+      try {
+        const movieDetails = await axios.get(
+          configurationStore.getBaseUrl() +
+            `/movie/${movieId}?language=${configurationStore.getLocale()}&append_to_response=videos,images`,
+          requestOptions
+        )
+
+        this.moviesWithDetails.push(movieDetails.data)
+
+        return movieDetails.data
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
 
